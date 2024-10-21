@@ -11,7 +11,7 @@ use muqsit\beacon\block\tile\listener\BeaconChunkListener;
 use muqsit\beacon\block\tile\listener\EmptyBeaconChunkListener;
 use muqsit\beacon\block\tile\listener\SimpleBeaconChunkListener;
 use muqsit\beacon\manager\BeaconManager;
-use pocketmine\block\BlockFactory;
+use pocketmine\block\RuntimeBlockStateRegistry;
 use pocketmine\block\tile\ContainerTrait;
 use pocketmine\block\tile\Nameable;
 use pocketmine\block\tile\NameableTrait;
