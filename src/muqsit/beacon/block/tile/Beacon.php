@@ -269,36 +269,38 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		}
 	}
 
-	public function recalculateCover() : void{
-		if($this->position->y < World::Y_MAX){
-			if($this->position->y < 1){
-				$this->covered = true;
-				return;
-			}
+	public function recalculateCover() : void {
+    if ($this->position->getY() < World::Y_MAX) { 
+        if ($this->position->getY() < 1) {
+            $this->covered = true;
+            return;
+        }
 
-			$x = $this->position->x;
-			$z = $this->position->z;
+        $x = (int) $this->position->getX(); 
+        $z = (int) $this->position->getZ(); 
 
-			$chunkX = $x >> Chunk::COORD_BIT_SIZE;
-			$chunkZ = $z >> Chunk::COORD_BIT_SIZE;
+        $chunkX = $x >> Chunk::COORD_BIT_SIZE;
+        $chunkZ = $z >> Chunk::COORD_BIT_SIZE;
 
-			$world = $this->position->getWorld();
-			$iterator = new SubChunkExplorer($world);
-			$block_factory =  BlockFactory::getInstance();
+        $world = $this->position->getWorld();
+        $iterator = new SubChunkExplorer($world);
+        $runtimee = RuntimeBlockStateRegistry::getInstance();
 
-			for($y = $this->position->y + 1; $y <= World::Y_MAX; ++$y){
-				if(!$world->isChunkLoaded($chunkX, $chunkZ) || $iterator->moveTo($x, $y, $z) === SubChunkExplorerStatus::INVALID){
-					continue;
-				}
+        for ($y = $this->position->getY() + 1; $y <= World::Y_MAX; ++$y) {
+            if (!$world->isChunkLoaded($chunkX, $chunkZ) || $iterator->moveTo($x, $y, $z) === SubChunkExplorerStatus::INVALID) {
+                continue;
+            }
 
-				if(!$block_factory->fromFullBlock($iterator->currentChunk->getFullBlock($x & SubChunk::COORD_MASK, $y, $z & SubChunk::COORD_MASK))->isTransparent()){
-					$this->covered = true;
-					return;
-				}
-			}
-		}
+            // Akses blok menggunakan koordinat yang tepat
+            $blockFullId = $iterator->currentChunk->getFullBlock($x & SubChunk::COORD_MASK, $y, $z & SubChunk::COORD_MASK);
+            if (!$runtimee->fromFullBlock($blockFullId)->isTransparent()) { 
+                $this->covered = true;
+                return;
+            }
+        }
+    }
 
-		$this->covered = false;
+          $this->covered = false;
 	}
 
 	public function recalculateLayers() : void{
